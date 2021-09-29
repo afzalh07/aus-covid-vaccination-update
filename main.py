@@ -1,51 +1,56 @@
+import time
 from bs4 import BeautifulSoup
 import requests
 import csv
 import datetime
 import os
 
-
+start = time.time()
 # local date as the csv filename
 t_day = datetime.date.today().strftime("%d-%m-%Y ")
 csv_file = open(os.path.join("Daily Update", f"{t_day}.csv"), 'w', newline="")
 csv_writer = csv.writer(csv_file)
-csv_writer.writerow(["States", "First Dose", "Second Dose", "60% On", "70% On",
-                     "80% On", "90% On"])
+csv_writer.writerow(["States", "First Dose", "Second Dose", "60% First", "70% First",
+                     "80% First", "90% First", "60% Second", "70% Second",
+                     "80% Second", "90% Second"])
+
+
+def store_csv(city, first_done, second_done, days_to):
+    """creating a new row in the csv file for each state"""
+    csv_writer.writerow([city, first_done, second_done, days_to[0],
+                         days_to[1], days_to[2], days_to[3], days_to[4],
+                         days_to[5], days_to[6], days_to[7]])
 
 
 class Dose:
-    """ The Dose class will create an object for each url and dose number """
+    """ The Dose class will create an instance for each url"""
 
-    # class variable count, keeps track of the execution of vaccinated() method
-    count = 1
-
-    def __init__(self, url, index, dose_no):
+    def __init__(self, url):
         self.soup = BeautifulSoup(requests.get(url).text, 'html.parser')
-        self.index = index  # 0- first dose; 1- second dose
-        self.dose_no = dose_no
-        # variables to access from the csv_file_ method
-        self.state, self.first_done, self.second_done = [None, None, None]
+
+        # variables to access from info method
+        self.state = self.soup.findAll('div', class_="box box1")[2].h2.text[:3]
+        self.track = self.soup.findAll('a', href="/vaccinations")
         self.days_to = []
+        # state name and vaccinated data
+        print(f"{self.state} vaccination update")
+        print(f"First dose: {self.track[0].text} \tSecond dose: {self.track[1].text}")
 
-        Dose.count += 1
-        if Dose.count % 2 == 0:
-            self.vaccinated()
-
-    def info(self):
+    def info(self, index, dose_no):
         """ The info method parse and print the data for each percentage goal """
 
-        print(f"\n{self.dose_no} Dose Prediction:")
+        print(f"\n{dose_no} Dose Prediction:")
         # goals is the class name for each div tag of percentage data
         goals = ["info-item info-item-1 DAYS", "info-item info-item-2 DAYS",
                  "info-item info-item-3 DAYS", "info-item info-item-4 DAYS"]
 
         for goal in goals:
             box = self.soup.findAll('div', class_=goal)
-            percentage = box[self.index].a.text
+            percentage = box[index].a.text
             # the length of the text of p tag with a child span tag: <p> days <span> date </span> </p>
-            len_ = len(box[self.index].p.text)
-            days = box[self.index].p.text[:len_ - 9]
-            date_ = box[self.index].p.span.text
+            len_ = len(box[index].p.text)
+            days = box[index].p.text[:len_ - 9]
+            date_ = box[index].p.span.text
             # if the goal is already reached
             if days.isspace() or days == "":
                 days = 0
@@ -53,21 +58,24 @@ class Dose:
             print(f"{percentage} vaccination in {days} days on {date_}")
             # a list of all the predicted date for csv file
             self.days_to.append(date_)
-        self.csv_file_()
+        # calling the function again for second dose prediction data
+        if index == 0:
+            self.info(1, "Second")
+            # create a new row only after collecting data for both doses for a certain city
+            store_csv(self.state, self.track[0].text, self.track[1].text, self.days_to)
 
-    def vaccinated(self):
-        """ The vaccinated method prints the sate name along with vaccination
-        update of both doses. This method only executes once for a
-        certain state, since each url used twice for two different instances"""
 
-        state = self.soup.findAll('div', class_="box box1")[2].h2.text
-        track = self.soup.findAll('a', href="/vaccinations")
-        self.state = state[:3]
-        print(f"{self.state} vaccination update")
-        self.first_done, self.second_done = track[0].text, track[1].text
-        print(f"First dose: {self.first_done} \tSecond dose: {self.second_done}")
+states = ["https://covidlive.com.au/", "https://covidlive.com.au/nsw",
+          "https://covidlive.com.au/vic", "https://covidlive.com.au/qld",
+          "https://covidlive.com.au/wa", "https://covidlive.com.au/sa",
+          "https://covidlive.com.au/tas", "https://covidlive.com.au/act",
+          "https://covidlive.com.au/nt"]
 
-    def csv_file_(self):
-        """Creating a csv file called from "info" method"""
-        csv_writer.writerow([self.state, self.first_done, self.second_done, self.days_to[0],
-                            self.days_to[1], self.days_to[2], self.days_to[3]])
+for state in states:
+    vaccination = Dose(state)
+    # calling the info method for first dose information
+    vaccination.info(0, "First")
+    print()
+
+csv_file.close()
+print(f"executed in {(time.time())- start}")

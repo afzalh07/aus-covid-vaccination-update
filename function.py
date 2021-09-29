@@ -1,13 +1,14 @@
+import time
 from bs4 import BeautifulSoup
 import requests
 import datetime
 import csv
 import os
 
-
+start = time.time()
 # local date as the csv filename
 t_day = datetime.date.today().strftime("%d-%m-%Y ")
-csv_file = open(os.path.join("Daily Update_2", f"{t_day}.csv"), 'w', newline="")
+csv_file = open(os.path.join("Daily Update", f"{t_day}.csv"), 'w', newline="")
 csv_writer = csv.writer(csv_file)
 csv_writer.writerow(["States", "First Dose", "Second Dose", "60% First", "70% First",
                      "80% First", "90% First", "60% Second", "70% Second",
@@ -15,9 +16,8 @@ csv_writer.writerow(["States", "First Dose", "Second Dose", "60% First", "70% Fi
 
 
 def dose(url):
+    """dose function takes the url for each state and parse the html"""
     html = requests.get(url)
-
-    # creating an object of modified html document
     soup = BeautifulSoup(html.text, 'html.parser')
 
     city = soup.findAll('div', class_="box box1")[2].h2.text
@@ -49,19 +49,19 @@ def dose(url):
             # a list of all the predicted date for csv file
             days_to.append(date_)
 
-        if index == 1:
-            csv_file_(city[:3], track[0].text, track[1].text, days_to)
-
-    info(0, "First")
+        # calling the function again for second dose prediction data
+        if index == 0:
+            info(1, "Second")
+            # create a new row only after collecting data for both doses for a certain city
+            store_csv(city[:3], track[0].text, track[1].text, days_to)
     return info
 
 
-def csv_file_(city, first_done, second_done, days_to):
-    """Creating a csv file called from "info" method"""
+def store_csv(city, first_done, second_done, days_to):
+    """creating a new row in the csv file for each state"""
     csv_writer.writerow([city, first_done, second_done, days_to[0],
                          days_to[1], days_to[2], days_to[3], days_to[4],
                          days_to[5], days_to[6], days_to[7]])
-    csv_file.close()
 
 
 states = ["https://covidlive.com.au/", "https://covidlive.com.au/nsw",
@@ -72,4 +72,10 @@ states = ["https://covidlive.com.au/", "https://covidlive.com.au/nsw",
 
 for state in states:
     vaccination = dose(state)
-    vaccination(1, "Second")
+    # calling info function for second dose information
+    vaccination(0, "First")
+    print()
+
+csv_file.close()
+
+print(f"executed in {(time.time())-start}")
