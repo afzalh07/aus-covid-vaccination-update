@@ -1,49 +1,75 @@
 from bs4 import BeautifulSoup
 import requests
-
-url = "https://covidlive.com.au/"
-# retrieve the html using the request library
-html = requests.get(url)
-
-# creating an object of modified html document
-soup = BeautifulSoup(html.text, 'html.parser')
+import datetime
+import csv
+import os
 
 
-def first_dose(goal_):
-    box = soup.findAll('div', class_=goal_)
-    percentage = box[0].a.text
-    len_ = len(box[0].p.text)
-    days = box[0].p.text[:len_ - 9]
-    if days.isspace() or days == "":
-        days = 0
-    date_ = box[0].p.span.text
-    print(f"{percentage} vaccination in {days} days on {date_}")
+# local date as the csv filename
+t_day = datetime.date.today().strftime("%d-%m-%Y ")
+csv_file = open(os.path.join("Daily Update_2", f"{t_day}.csv"), 'w', newline="")
+csv_writer = csv.writer(csv_file)
+csv_writer.writerow(["States", "First Dose", "Second Dose", "60% First", "70% First",
+                     "80% First", "90% First", "60% Second", "70% Second",
+                     "80% Second", "90% Second"])
 
 
-def second_dose(goal_):
-    box = soup.findAll('div', class_=goal_)
-    percentage = box[1].a.text
-    len_ = len(box[1].p.text)
-    days = box[1].p.text[:len_ - 9]
-    if days.isspace() or days == "":
-        days = 0
-    date_ = box[1].p.span.text
+def dose(url):
+    html = requests.get(url)
 
-    print(f"{percentage} vaccination in {days} days on {date_}")
+    # creating an object of modified html document
+    soup = BeautifulSoup(html.text, 'html.parser')
 
-
-def vaccinated():
-    state = soup.findAll('div', class_="box box1")[2].h2.text
+    city = soup.findAll('div', class_="box box1")[2].h2.text
     track = soup.findAll('a', href="/vaccinations")
-    print(f"{state[:3]} vaccination update")
+    print(f"{city[:3]} vaccination update")
     print(f"first dose: {track[0].text}\tSecond dose:{track[1].text}")
 
+    index = 0
+    dose_no = "First"
+    days_to = []
 
-goals = ["info-item info-item-1 DAYS", "info-item info-item-2 DAYS",
-         "info-item info-item-3 DAYS", "info-item info-item-4 DAYS"]
+    def info(index, dose_no):
+        print(f"\n{dose_no} Dose Prediction:")
+        goals = ["info-item info-item-1 DAYS", "info-item info-item-2 DAYS",
+                 "info-item info-item-3 DAYS", "info-item info-item-4 DAYS"]
 
-vaccinated()
-print()
+        for goal in goals:
+            box = soup.findAll('div', class_=goal)
+            percentage = box[index].a.text
+            # the length of the text of p tag with a child span tag: <p> days <span> date </span> </p>
+            len_ = len(box[index].p.text)
+            days = box[index].p.text[:len_ - 9]
+            date_ = box[index].p.span.text
+            # if the goal is already reached
+            if days.isspace() or days == "":
+                days = 0
+                date_ = None
+            print(f"{percentage} vaccination in {days} days on {date_}")
+            # a list of all the predicted date for csv file
+            days_to.append(date_)
 
-for goal in goals:
-    first_dose(goal)
+        if index == 1:
+            csv_file_(city[:3], track[0].text, track[1].text, days_to)
+
+    info(0, "First")
+    return info
+
+
+def csv_file_(city, first_done, second_done, days_to):
+    """Creating a csv file called from "info" method"""
+    csv_writer.writerow([city, first_done, second_done, days_to[0],
+                         days_to[1], days_to[2], days_to[3], days_to[4],
+                         days_to[5], days_to[6], days_to[7]])
+    csv_file.close()
+
+
+states = ["https://covidlive.com.au/", "https://covidlive.com.au/nsw",
+          "https://covidlive.com.au/vic", "https://covidlive.com.au/qld",
+          "https://covidlive.com.au/wa", "https://covidlive.com.au/sa",
+          "https://covidlive.com.au/tas", "https://covidlive.com.au/act",
+          "https://covidlive.com.au/nt"]
+
+for state in states:
+    vaccination = dose(state)
+    vaccination(1, "Second")
