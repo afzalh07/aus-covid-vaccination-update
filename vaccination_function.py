@@ -53,15 +53,11 @@ def dose(url):
         if index == 0:
             info(1, "Second")
             # create a new row only after collecting data for both doses for a certain city
-            store_csv(city[:3], track[0].text, track[1].text, days_to)
+            csv_writer.writerow([city, track[0].text, track[1].text, days_to[0],
+                                 days_to[1], days_to[2], days_to[3], days_to[4],
+                                 days_to[5], days_to[6], days_to[7]])
+
     return info
-
-
-def store_csv(city, first_done, second_done, days_to):
-    """creating a new row in the csv file for each state"""
-    csv_writer.writerow([city, first_done, second_done, days_to[0],
-                         days_to[1], days_to[2], days_to[3], days_to[4],
-                         days_to[5], days_to[6], days_to[7]])
 
 
 states = ["https://covidlive.com.au/", "https://covidlive.com.au/nsw",
@@ -78,4 +74,4 @@ for state in states:
 
 csv_file.close()
 
-print(f"executed in {(time.time())-start}")
+print(f"executed in {(time.time()) - start}")
