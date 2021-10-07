@@ -20,9 +20,9 @@ def dose(url):
     html = requests.get(url)
     soup = BeautifulSoup(html.text, 'html.parser')
 
-    city = soup.findAll('div', class_="box box1")[2].h2.text
+    city = soup.findAll('div', class_="box box1")[2].h2.text[:3]
     track = soup.findAll('a', href="/vaccinations")
-    print(f"{city[:3]} vaccination update")
+    print(f"{city} vaccination update")
     print(f"first dose: {track[0].text}\tSecond dose:{track[1].text}")
 
     index = 0
