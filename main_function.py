@@ -40,7 +40,10 @@ def dose(url):
             # the length of the text of p tag with a child span tag: <p> days <span> date </span> </p>
             len_ = len(box[index].p.text)
             days = box[index].p.text[:len_ - 9]
-            date_ = box[index].p.span.text
+            try:
+                date_ = box[index].p.span.text
+            except AttributeError:
+                date_ = None
             # if the goal is already reached
             if days.isspace() or days == "":
                 days = 0
