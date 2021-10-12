@@ -1,10 +1,10 @@
-States,First Dose,Second Dose,60% First,70% First,80% First,90% First,60% Second,70% Second,80% Second,90% Second
-AUS,82.4%,62.4%,,,30 Oct 21,12 Nov 21,,21 Oct 21,03 Nov 21,15 Nov 21
-NSW,90.4%,74.0%,,,,28 Oct 21,,,18 Oct 21,29 Oct 21
-VIC,85.8%,59.3%,,,20 Oct 21,30 Oct 21,12 Oct 21,23 Oct 21,02 Nov 21,13 Nov 21
-QLD,70.2%,52.7%,,07 Nov 21,03 Dec 21,17 Dec 21,24 Oct 21,11 Nov 21,28 Nov 21,15 Dec 21
-WA ,70.1%,52.0%,,31 Oct 21,20 Nov 21,30 Nov 21,27 Oct 21,16 Nov 21,05 Dec 21,25 Dec 21
-SA ,72.9%,55.0%,,26 Oct 21,16 Nov 21,26 Nov 21,22 Oct 21,11 Nov 21,01 Dec 21,20 Dec 21
-TAS,80.3%,65.0%,,,04 Nov 21,16 Nov 21,,19 Oct 21,02 Nov 21,16 Nov 21
-ACT,96.9%,73.6%,,,,,,,19 Oct 21,30 Oct 21
-NT ,68.5%,56.5%,18 Oct 21,28 Nov 21,08 Jan 22,29 Jan 22,21 Oct 21,16 Nov 21,12 Dec 21,06 Jan 22
+States,First Dose,Second Dose,70% First,80% First,90% First,95% First,60% Second,70% Second,80% Second,90% Second
+AUS,82.40%,62.40%,,,30-Oct-21,12-Nov-21,,21-Oct-21,3-Nov-21,15-Nov-21
+NSW,90.40%,74.00%,,,,28-Oct-21,,,18-Oct-21,29-Oct-21
+VIC,85.80%,59.30%,,,20-Oct-21,30-Oct-21,12-Oct-21,23-Oct-21,2-Nov-21,13-Nov-21
+QLD,70.20%,52.70%,,7-Nov-21,3-Dec-21,17-Dec-21,24-Oct-21,11-Nov-21,28-Nov-21,15-Dec-21
+WA ,70.10%,52.00%,,31-Oct-21,20-Nov-21,30-Nov-21,27-Oct-21,16-Nov-21,5-Dec-21,25-Dec-21
+SA ,72.90%,55.00%,,26-Oct-21,16-Nov-21,26-Nov-21,22-Oct-21,11-Nov-21,1-Dec-21,20-Dec-21
+TAS,80.30%,65.00%,,,4-Nov-21,16-Nov-21,,19-Oct-21,2-Nov-21,16-Nov-21
+ACT,96.90%,73.60%,,,,,,,19-Oct-21,30-Oct-21
+NT ,68.50%,56.50%,18-Oct-21,28-Nov-21,8-Jan-22,29-Jan-22,21-Oct-21,16-Nov-21,12-Dec-21,6-Jan-22
