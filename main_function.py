@@ -10,8 +10,8 @@ start = time.time()
 t_day = datetime.date.today().strftime("%d-%m-%Y ")
 csv_file = open(os.path.join("Daily Update", f"{t_day}.csv"), 'w', newline="")
 csv_writer = csv.writer(csv_file)
-csv_writer.writerow(["States", "First Dose", "Second Dose", "60% First", "70% First",
-                     "80% First", "90% First", "60% Second", "70% Second",
+csv_writer.writerow(["States", "First Dose", "Second Dose", "70% First", "80% First",
+                     "90% First", "95% First", "60% Second", "70% Second",
                      "80% Second", "90% Second"])
 
 
